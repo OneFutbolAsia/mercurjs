@@ -386,36 +386,6 @@ export function OrderCreateFulfillmentForm({
                   )}
                 </div>
 
-                <div className="mt-8 pt-8 ">
-                  <Form.Field
-                    control={form.control}
-                    name="send_notification"
-                    render={({ field: { onChange, value, ...field } }) => {
-                      return (
-                        <Form.Item>
-                          <div className="flex items-center justify-between">
-                            <Form.Label>
-                              {t("orders.returns.sendNotification")}
-                            </Form.Label>
-                            <Form.Control>
-                              <Form.Control>
-                                <Switch
-                                  checked={!!value}
-                                  onCheckedChange={onChange}
-                                  {...field}
-                                />
-                              </Form.Control>
-                            </Form.Control>
-                          </div>
-                          <Form.Hint className="!mt-1">
-                            {t("orders.fulfillment.sendNotificationHint")}
-                          </Form.Hint>
-                          <Form.ErrorMessage />
-                        </Form.Item>
-                      )
-                    }}
-                  />
-                </div>
               </div>
             </div>
           </div>
