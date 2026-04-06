@@ -75,13 +75,26 @@ const Form = () => {
             {...register("password")}
           />
           {error && <p className="label-md text-negative">{error}</p>}
+
           <Button className="w-full" disabled={isSubmitting}>
             Log in
           </Button>
+
+          {/* Signup */}
           <p className="text-center label-md">
             Don&apos;t have an account yet?{" "}
             <LocalizedClientLink href="/user/register" className="underline">
               Sign up!
+            </LocalizedClientLink>
+          </p>
+
+          {/* Forgot Password (NEW) */}
+          <p className="text-center label-md">
+            <LocalizedClientLink
+              href="/forgot-password"
+              className="underline text-gray-500 hover:text-black"
+            >
+              Forgot password?
             </LocalizedClientLink>
           </p>
         </div>
