@@ -10,7 +10,7 @@ export const sdk = new Medusa({
   publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
 })
 
-console.log("CONFIG LOGS: ", { sdk: sdk, MEDUSA_BACKEND_URL: MEDUSA_BACKEND_URL })
+console.log("CONFIG LOGS: ", { sdk: sdk, MEDUSA_BACKEND_URL: MEDUSA_BACKEND_URL, NEXT_PUBLIC_MEDUSA_BACKEND_URL: process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL })
 
 type FetchQueryOptions = Omit<RequestInit, "headers" | "body"> & {
   headers?: Record<string, string | null | { tags: string[] }>
