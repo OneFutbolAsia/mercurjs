@@ -12,6 +12,14 @@ export const useDate = () => {
   const locale =
     languages.find((l) => l.code === i18n.language)?.date_locale || enUS
 
+  const toPHDate = (date: string | Date) => {
+    return new Date(
+      new Date(date).toLocaleString("en-US", {
+        timeZone: "Asia/Manila",
+      })
+    )
+  }
+
   const getFullDate = ({
     date,
     includeTime = false,
@@ -19,7 +27,7 @@ export const useDate = () => {
     date: string | Date
     includeTime?: boolean
   }) => {
-    const ensuredDate = new Date(date)
+    const ensuredDate = toPHDate(date)
 
     if (isNaN(ensuredDate.getTime())) {
       return ""
@@ -32,10 +40,22 @@ export const useDate = () => {
     })
   }
 
-  function getRelativeDate(date: string | Date): string {
-    const now = new Date()
+  const getShortDate = (date: string | Date) => {
+    const ensuredDate = toPHDate(date)
 
-    return formatDistance(sub(new Date(date), { minutes: 0 }), now, {
+    if (isNaN(ensuredDate.getTime())) {
+      return ""
+    }
+
+    return format(ensuredDate, "d MMM yyyy", {
+      locale,
+    })
+  }
+
+  function getRelativeDate(date: string | Date): string {
+    const now = toPHDate(new Date())
+
+    return formatDistance(sub(toPHDate(date), { minutes: 0 }), now, {
       addSuffix: true,
       locale,
     })
@@ -44,5 +64,6 @@ export const useDate = () => {
   return {
     getFullDate,
     getRelativeDate,
+    getShortDate,
   }
 }
