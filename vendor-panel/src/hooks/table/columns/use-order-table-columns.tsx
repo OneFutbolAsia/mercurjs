@@ -29,6 +29,7 @@ import { useTranslation } from "react-i18next"
 import { getOrderStatus } from "../../../lib/order-helpers"
 import { StatusCell } from "../../../components/table/table-cells/common/status-cell"
 import { OrderPaymentStatus } from "../../../types/order"
+import { useDate } from "../../../hooks/use-date"
 
 // We have to use any here, as the type of Order is so complex that it lags the TS server
 const columnHelper = createColumnHelper<HttpTypes.AdminOrder>()
@@ -39,6 +40,7 @@ type UseOrderTableColumnsProps = {
 
 export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
   const { exclude = [] } = props ?? {}
+  const { getShortDate } = useDate()
 
   const columns = useMemo(
     () => [
@@ -53,9 +55,11 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
       columnHelper.accessor("created_at", {
         header: () => <DateHeader />,
         cell: ({ getValue }) => {
-          const date = new Date(getValue())
-
-          return <DateCell date={date} />
+          return (
+            <div className="truncate">
+              {getShortDate(getValue())}
+            </div>
+          )
         },
       }),
       columnHelper.accessor("status", {
