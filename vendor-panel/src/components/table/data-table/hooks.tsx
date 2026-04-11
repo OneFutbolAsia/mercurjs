@@ -17,20 +17,25 @@ export const useSelectedParams = ({
     setSearchParams((prev) => {
       const newValue = new URLSearchParams(prev)
 
-      const updateMultipleValues = () => {
+      // FORCE ARRAY FIELDS (critical)
+      const arrayFields = ["status", "collection_id", "category_id"]
+
+      const isArrayField = arrayFields.includes(param)
+
+      if (isArrayField) {
+        // ALWAYS send as array
+        newValue.set(identifier, value.includes(",") ? value : `${value}`)
+      } else if (multiple) {
         const existingValues = newValue.get(identifier)?.split(",") || []
 
         if (!existingValues.includes(value)) {
           existingValues.push(value)
           newValue.set(identifier, existingValues.join(","))
         }
-      }
-
-      const updateSingleValue = () => {
+      } else {
         newValue.set(identifier, value)
       }
 
-      multiple ? updateMultipleValues() : updateSingleValue()
       newValue.delete(offsetKey)
 
       return newValue
@@ -66,7 +71,13 @@ export const useSelectedParams = ({
   }
 
   const get = () => {
-    return searchParams.get(identifier)?.split(",").filter(Boolean) || []
+    return (
+      searchParams
+        .get(identifier)
+        ?.split(",")
+        .map((v) => v.trim())
+        .filter(Boolean) || []
+    )
   }
 
   return { add, delete: deleteParam, get }
