@@ -65,28 +65,51 @@ export const fetchQuery = async (
   }
 ) => {
   const bearer = (await window.localStorage.getItem("medusa_auth_token")) || ""
-  const params = Object.entries(query || {}).reduce(
-    (acc, [key, value], index) => {
-      if (value && value !== undefined) {
-        const queryLength = Object.values(query || {}).filter(
-          (i) => i && i !== undefined
-        ).length
-        acc += `${key}=${value}${index + 1 <= queryLength ? "&" : ""}`
-      }
-      return acc
-    },
-    ""
-  )
-  const response = await fetch(`${backendUrl}${url}${params && `?${params}`}`, {
-    method: method,
-    headers: {
-      authorization: `Bearer ${bearer}`,
-      "Content-Type": "application/json",
-      "x-publishable-api-key": publishableApiKey,
-      ...headers,
-    },
-    body: body ? JSON.stringify(body) : null,
+
+  const queryToProcess = query ? { ...query } : {}
+
+  // Medusa 2.0 Mapping: Rename 'order' to 'order_by'
+  if (queryToProcess.order) {
+    queryToProcess.order_by = queryToProcess.order
+    delete queryToProcess.order
+  }
+
+  const params = new URLSearchParams()
+
+  Object.entries(queryToProcess).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return
+
+    if (Array.isArray(value)) {
+      // Medusa 2.0 often requires 'key[]' format for the backend to parse as array
+      value.forEach((v) => {
+        if (v !== undefined && v !== null) {
+          params.append(`${key}[]`, String(v))
+        }
+      })
+    } else if (key === "status") {
+      // FORCE status to be an array format even if it's a single string
+      // This fixes the "Expected type: 'array' for field 'status'" error
+      params.append(`${key}[]`, String(value))
+    } else {
+      params.append(key, String(value))
+    }
   })
+
+  const queryString = params.toString()
+
+  const response = await fetch(
+    `${backendUrl}${url}${queryString ? `?${queryString}` : ""}`,
+    {
+      method: method,
+      headers: {
+        authorization: `Bearer ${bearer}`,
+        "Content-Type": "application/json",
+        "x-publishable-api-key": publishableApiKey,
+        ...headers,
+      },
+      body: body ? JSON.stringify(body) : null,
+    }
+  )
 
   if (!response.ok) {
     const errorData = await response.json()
