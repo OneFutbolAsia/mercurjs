@@ -68,10 +68,13 @@ export const fetchQuery = async (
 
   const queryToProcess = query ? { ...query } : {}
 
-  // Medusa 2.0 Mapping: Rename 'order' to 'order_by'
-  if (queryToProcess.order) {
-    queryToProcess.order_by = queryToProcess.order
-    delete queryToProcess.order
+  /**
+   * FIX: Most Medusa 2.0 list endpoints expect 'order'.
+   * If the UI sends 'order_by', we normalize it to 'order'.
+   */
+  if (queryToProcess.order_by) {
+    queryToProcess.order = queryToProcess.order_by
+    delete queryToProcess.order_by
   }
 
   const params = new URLSearchParams()
@@ -80,15 +83,12 @@ export const fetchQuery = async (
     if (value === undefined || value === null || value === "") return
 
     if (Array.isArray(value)) {
-      // Medusa 2.0 often requires 'key[]' format for the backend to parse as array
       value.forEach((v) => {
         if (v !== undefined && v !== null) {
           params.append(`${key}[]`, String(v))
         }
       })
     } else if (key === "status") {
-      // FORCE status to be an array format even if it's a single string
-      // This fixes the "Expected type: 'array' for field 'status'" error
       params.append(`${key}[]`, String(value))
     } else {
       params.append(key, String(value))
@@ -113,6 +113,7 @@ export const fetchQuery = async (
 
   if (!response.ok) {
     const errorData = await response.json()
+    console.error("Fetch Error:", errorData) // Added for easier debugging
     throw new Error(errorData.message || "Nieznany błąd serwera")
   }
 
