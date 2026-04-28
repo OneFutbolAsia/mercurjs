@@ -18,19 +18,18 @@ export function passwordResetTemplate({ data }: Data, to: string): string {
         <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
 
           <tr>
-            <td style="background:#000000;padding:24px 32px;">
+            <td style="background:#eeeeee;padding:24px 32px;text-align:center;">
               <img
-                src="${process.env.BACKEND_URL ?? "http://localhost:9000"}/static/images/logo_100x100.png"
+                src="${process.env.MINIO_PUBLIC_ENDPOINT}/medusa-media/images/logo_100x100.png"
                 alt="Onefutbol"
-                height="36"
-                style="display:block;"
+                height="100"
+                style="display:block;margin:0 auto;"
               />
             </td>
           </tr>
 
           <tr>
             <td style="padding:40px 32px;">
-              <p style="margin:0 0 16px;font-size:13px;color:#888888;">${to}</p>
               <h2 style="margin:0 0 16px;font-size:20px;color:#111111;">Have you forgotten your password?</h2>
               <p style="margin:0 0 12px;font-size:15px;color:#444444;line-height:1.6;">
                 We received a request to reset the password for your <strong>Onefutbol</strong> account.
