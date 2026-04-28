@@ -112,7 +112,7 @@ module.exports = defineConfig({
       options: {
         providers: [
           ...(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL ? [{
-            resolve: '@mercurjs/resend/providers/resend',
+            resolve: './src/modules/email',
             id: 'resend',
             options: {
               channels: ['email'],
